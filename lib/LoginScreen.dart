@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'SignupScreen.dart';
+import 'package:email_validator/email_validator.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,8 +11,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool inputError = false;
+  String errorMessage = "Error";
+  bool passwordObscured = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,38 +36,62 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                   child: TextField(
-                    style: const TextStyle(color: Colors.grey),
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
+                    style: TextStyle(color: Colors.grey[600]),
+                    controller: emailController,
+                    decoration: InputDecoration(
+                        enabledBorder: const OutlineInputBorder(
                           borderSide:
-                          BorderSide(color: Colors.grey, width: 0.0),
+                              BorderSide(color: Colors.grey, width: 0.0),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color.fromRGBO(32, 179, 86, 1))),
-                        hintText: 'User Name',
-                        hintStyle: TextStyle(color: Colors.grey)),
+                        hintText: 'Email Address',
+                        hintStyle: TextStyle(color: Colors.grey[400])),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
                   child: TextField(
-                    style: const TextStyle(color: Colors.grey),
-                    obscureText: true,
+                    style: TextStyle(color: Colors.grey[600]),
+                    obscureText: passwordObscured ? true : false,
                     controller: passwordController,
-                    decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.grey, width: 0.0),
+                    decoration: InputDecoration(
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromRGBO(32, 179, 86, 1))),
+                      hintText: 'Password',
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          passwordObscured
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.grey,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(32, 179, 86, 1))),
-                        hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.grey)),
+                        onPressed: () {
+                          setState(() {
+                            passwordObscured = !passwordObscured;
+                          });
+                        },
+                      ),
+                    ),
                   ),
                 ),
+                inputError
+                    ? Container(
+                        padding: const EdgeInsets.fromLTRB(25, 0, 25, 20),
+                        child: Text(
+                          errorMessage,
+                          style: const TextStyle(
+                            color: Color.fromRGBO(239, 83, 80, 1),
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -75,10 +103,41 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Login',
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()));
+                        //The focus is adjusted so that the keyboard collapses before redirecting to the next screen
+                        //That prevents a RenderFlex overflow on the next screen
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+                        if (!currentFocus.hasPrimaryFocus) {
+                          currentFocus.unfocus();
+                        }
+                        setState(() {
+                          inputError = false;
+                        });
+                        if (emailController.text.isEmpty) {
+                          setState(() {
+                            inputError = true;
+                            errorMessage = "Please fill all input fields.";
+                          });
+                        } else if (passwordController.text.isEmpty) {
+                          setState(() {
+                            inputError = true;
+                            errorMessage = "Please fill all input fields.";
+                          });
+                        } else if (!EmailValidator.validate(
+                            emailController.text)) {
+                          setState(() {
+                            inputError = true;
+                            errorMessage =
+                                "Please enter a valid email address.";
+                          });
+                        }
+                        //TODO: Add Email and Password combination check condition here
+                        else {
+                          inputError = false;
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()));
+                        }
                       },
                     )),
                 Container(
