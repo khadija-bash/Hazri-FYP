@@ -40,6 +40,11 @@ dependencies:
   dropdown_formfield: ^0.1.4
   intl: ^0.17.0
   email_validator: ^2.0.1
+  flutter_lints: ^1.0.0
+  firebase_core: ^1.0.3
+  firebase_storage: ^8.0.3
+
+  file_picker: ^3.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart'  as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
+import 'package:path/path.dart';
 import 'AttendanceList.dart';
 
 
@@ -25,6 +31,7 @@ class CameraScreenState extends State<CameraScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   int _photoCountdown = 3;
+  File? file;
 
   @override
   void initState() {
@@ -41,12 +48,33 @@ class CameraScreenState extends State<CameraScreen> {
     _controller.dispose();
     super.dispose();
   }
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  Future uploadFile() async {
 
+    print('here1');
+    if (file == null) return;
+    final fileName = basename(file!.path);
+    final destination = 'files';
+
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('$fileName');
+      await ref.putFile(file!);
+      await ref.getDownloadURL().then(
+            (value) => print("Done: $value"),
+      );
+
+    } catch (e) {
+      print('error occured');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
+        future:  _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             final mediaSize = MediaQuery.of(context).size;
@@ -94,19 +122,29 @@ class CameraScreenState extends State<CameraScreen> {
                   await Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const AttendanceList()));
                 }
-                /*
+
                 final image = await _controller.takePicture();
+                setState(() {
+                  if (image != null) {
+                    file = File(image.path);
+                    uploadFile();
+                  } else {
+                    print('No image selected.');
+                  }
+                });
+
                 // If the picture was taken, display it on a new screen.
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => DisplayPictureScreen(
-                      // Pass the automatically generated path to
-                      // the DisplayPictureScreen widget.
-                      imagePath: image.path,
-                    ),
-                  ),
-                );
-                */
+                // await Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => DisplayPictureScreen(
+                //       // Pass the automatically generated path to
+                //       // the DisplayPictureScreen widget.
+                //       imagePath: image.path,
+                //     ),
+                //   ),
+                // );
+
+
               } catch (e) {
                 if (kDebugMode) {
                   print(e);
@@ -127,6 +165,10 @@ class CameraScreenState extends State<CameraScreen> {
       ),
     );
   }
+
+
+
+
 }
 
 class _MediaSizeClipper extends CustomClipper<Rect> {
@@ -142,6 +184,7 @@ class _MediaSizeClipper extends CustomClipper<Rect> {
     return true;
   }
 }
+
 
 /*
 class DisplayPictureScreen extends StatelessWidget {
