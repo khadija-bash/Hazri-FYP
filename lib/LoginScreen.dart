@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hazri_mvp_frontend/main.dart';
 import 'HomePage.dart';
 import 'SignupScreen.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,6 +18,24 @@ class _LoginScreenState extends State<LoginScreen> {
   bool inputError = false;
   String errorMessage = "Error";
   bool passwordObscured = true;
+  final _auth = FirebaseAuth.instance;
+
+  Future login() async{
+    try {
+      final newUser = await _auth.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      if (newUser != null) {
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(
+              builder: (context) => const HomePage()),
+        );
+      }
+    }
+    catch (e)
+    {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,10 +153,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         //TODO: Add Email and Password combination check condition here
                         else {
                           inputError = false;
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomePage()));
+                          login();
+                          // Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const HomePage()));
                         }
                       },
                     )),

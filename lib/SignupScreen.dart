@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'LoginScreen.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -18,7 +19,23 @@ class _SignupScreenState extends State<SignupScreen> {
   String errorMessage = "Error";
   bool passwordObscured = true;
   bool confirmPasswordObscured = true;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
+  Future signup() async {
+    try {
+      final newUser = await auth.createUserWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      if (newUser != null) {
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(
+              builder: (context) => const LoginScreen()));
+      }
+    }
+    catch (e)
+    {
+      print(e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,10 +201,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         //TODO: Add account creation here. Check if email is already in use.
                         else {
                           inputError = false;
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomePage()));
+                          signup();
+                          // Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const HomePage()));
                         }
                       },
                     )),
@@ -218,5 +236,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 )
               ],
             )));
+
   }
+
 }
