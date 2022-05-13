@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hazri_mvp_frontend/main.dart';
-import 'HomePage.dart';
+import 'package:hazri_mvp_frontend/Timetable.dart';
 import 'SignupScreen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (newUser != null) {
         Navigator.pushReplacement(context,
           MaterialPageRoute(
-              builder: (context) => const HomePage()),
+              builder: (context) => const Timetable()),
         );
       }
     }
