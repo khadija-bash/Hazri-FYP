@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hazri_mvp_frontend/EnrollmentScreen.dart';
 import 'package:hazri_mvp_frontend/LoginScreen.dart';
 import 'package:camera/camera.dart';
 import 'CameraScreen.dart';
@@ -26,7 +27,7 @@ class _TimetableState extends State<Timetable> {
   void initState() {
     super.initState();
     _lectures.addAll(
-        [Lecture("DB-A", "8:30-10:00"), Lecture("OOP-A", "12:00-1:30")]);
+        [Lecture("DB-A", "8:30-10:00"), Lecture("OOP-A", "12:00-1:30"), Lecture("OS-B", "3:30-5:00")]);
   }
 
   Future<void> _signOut() async {
@@ -101,7 +102,10 @@ class _TimetableState extends State<Timetable> {
                   onTap: () {
                     Navigator.pop(
                         context); //To close/reset the drawer menu before redirecting
-                    //TODO: Redirect to enrollment screen
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EnrollmentScreen()));
                   },
                 ),
                 ListTile(
