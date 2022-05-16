@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AttendanceList extends StatefulWidget {
-  const AttendanceList({Key? key}) : super(key: key);
+  final List<String> data;
+  const AttendanceList({Key? key, required this.data}) : super(key: key);
 
   @override
   State<AttendanceList> createState() => _AttendanceListState();
@@ -11,12 +12,15 @@ class _AttendanceListState extends State<AttendanceList> {
   final List<String> _studentsList = <String>[];
   final List<String> _presentList = <String>[];
   final List<String> _absentList = <String>[];
+  List<String> data = <String>[];
 
   @override
   void initState() {
     super.initState();
-    _absentList.addAll(["Haider Zia", "Khadija Bashir"]);
-    _presentList.addAll(["Rabbia Sajjad"]);
+    data = widget.data;
+    _absentList.addAll(["Khadija Bashir"]);
+    _presentList.addAll(data);
+    // _presentList.addAll(["Rabbia Sajjad"]);
     _studentsList.addAll(_absentList);
     _studentsList.addAll(_presentList);
   }

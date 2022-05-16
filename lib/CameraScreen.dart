@@ -1,6 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart'  as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:path/path.dart';
 import 'AttendanceList.dart';
+import 'package:http/http.dart' as http;
 
 
 //In addition to the Camera Screen Stateful Widget,
@@ -31,6 +32,7 @@ class CameraScreenState extends State<CameraScreen> {
   late Future<void> _initializeControllerFuture;
   int _photoCountdown = 3;
   File? file;
+  List<String> data = [];
 
   @override
   void initState() {
@@ -69,6 +71,33 @@ class CameraScreenState extends State<CameraScreen> {
       print('error occured');
     }
   }
+  //function to make http request to flask
+  Future<http.Response> getFaceCoordinate(String link) async {
+    ///MultiPart request
+    String filename = basename(file!.path);
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(link),
+    );
+    Map<String, String> headers = {"Content-type": "multipart/form-data"};
+    request.files.add(
+      http.MultipartFile(
+        'image',
+        file!.readAsBytes().asStream(),
+        file!.lengthSync(),
+        filename: filename,
+      ),
+    );
+    request.headers.addAll(headers);
+    print("request: " + request.toString());
+    var res = await request.send();
+    var response = await http.Response.fromStream(res);
+    print("This is response:" + response.body);
+    print("This is res: ${res.statusCode} ");
+    print("This is response: ${response.statusCode} ");
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,7 +138,7 @@ class CameraScreenState extends State<CameraScreen> {
               try {
                 // Ensure that the camera is initialized.
                 await _initializeControllerFuture;
-
+                final image = await _controller.takePicture();
                 // Attempt to take a picture and get the file `image`
                 // where it was saved.
 
@@ -118,21 +147,47 @@ class CameraScreenState extends State<CameraScreen> {
                 });
 
                 if (_photoCountdown < 1) {
-                  await Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const AttendanceList()));
+
+                  // If the picture was taken, display it on a new screen.
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DisplayPictureScreen(
+                        // Pass the automatically generated path to
+                        // the DisplayPictureScreen widget.
+                        imagePath: image.path,
+                      ),
+                    ),
+                  );
+                  //   await Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  //       builder: (context) => AttendanceList(data: data)));
                 }
 
-                final image = await _controller.takePicture();
-                setState(() {
+                // final image = await _controller.takePicture();
+                setState(() async {
                   if (image != null) {
                     file = File(image.path);
                     uploadFile();
+                    final res = await getFaceCoordinate(
+                        "http://d096-35-231-196-22.ngrok.io/face_detection");
+                    //debugPrint(res.body);
+                    final val = jsonDecode(res.body);
+                    print("Val: $val");
+
+                    for (var item in val['faces']) {
+                      data.add("$item");
+                    }
+                    print(data);
+                    debugPrint("$data");
+                    await Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => AttendanceList(data: data)));
+
+
                   } else {
                     print('No image selected.');
                   }
                 });
 
-                // If the picture was taken, display it on a new screen.
+                // // If the picture was taken, display it on a new screen.
                 // await Navigator.of(context).push(
                 //   MaterialPageRoute(
                 //     builder: (context) => DisplayPictureScreen(
@@ -185,7 +240,7 @@ class _MediaSizeClipper extends CustomClipper<Rect> {
 }
 
 
-/*
+
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
 
@@ -202,4 +257,4 @@ class DisplayPictureScreen extends StatelessWidget {
     );
   }
 }
- */
+
