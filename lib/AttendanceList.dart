@@ -97,7 +97,6 @@ class _AttendanceListState extends State<AttendanceList> {
             ),
           ),
           onPressed: () {
-            // NEW lines from here...
             setState(() {
               if (present) {
                 _presentList.remove(studentName);
@@ -121,5 +120,6 @@ class _AttendanceListState extends State<AttendanceList> {
 
   void _confirmAttendance() {
     Navigator.of(context).popUntil((route) => route.isFirst);
+    //TODO: Add attendance to firebase
   }
 }
