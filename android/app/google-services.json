@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "506113575400",
-    "project_id": "hazri-a623a",
-    "storage_bucket": "hazri-a623a.appspot.com"
+    "project_number": "424251355836",
+    "project_id": "hazri-fe238",
+    "storage_bucket": "hazri-fe238.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:506113575400:android:71a75e9c77e8b333297c5d",
+        "mobilesdk_app_id": "1:424251355836:android:2ea3c10a356ecab00896b9",
         "android_client_info": {
           "package_name": "com.example.hazri"
         }
       },
       "oauth_client": [
         {
-          "client_id": "506113575400-cmos7kb25s52qkeuqq7jp9vecl4nofhq.apps.googleusercontent.com",
+          "client_id": "424251355836-4b03fimb38q9uee1qjgf5jatgiajvv4o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkGz8GJnlzOA8FYEcpaRyXNqojC2Gbdeg"
+          "current_key": "AIzaSyBv8lsAm_BMqXQdwgZoHz0J71TprXysWzg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "506113575400-cmos7kb25s52qkeuqq7jp9vecl4nofhq.apps.googleusercontent.com",
+              "client_id": "424251355836-4b03fimb38q9uee1qjgf5jatgiajvv4o.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
