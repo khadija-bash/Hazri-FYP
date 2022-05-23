@@ -115,7 +115,7 @@ class _DownloadAttendanceState extends State<DownloadAttendance> {
                       primary: const Color.fromRGBO(32, 179, 86, 1),
                       onPrimary: Colors.grey[300]), // Background color
                   child: const Text(
-                    'Download',
+                    'View Attendance',
                   ),
                 ),
               )
