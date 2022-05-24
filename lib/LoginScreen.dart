@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hazri_mvp_frontend/Timetable.dart';
+import 'package:hazri_mvp_frontend/HomePage.dart';
 import 'SignupScreen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,20 +19,18 @@ class _LoginScreenState extends State<LoginScreen> {
   bool passwordObscured = true;
   final _auth = FirebaseAuth.instance;
 
-  Future login() async{
+  Future login() async {
     try {
       final newUser = await _auth.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
       if (newUser != null) {
-        Navigator.pushReplacement(context,
-          MaterialPageRoute(
-              builder: (context) => const Timetable()),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
-    }
-    catch (e)
-    {
-      print(e);
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -152,7 +150,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         //TODO: Add Email and Password combination check condition here
                         else {
                           inputError = false;
-                          login();
+                          try{
+                            login();
+                          }catch(e){
+                            inputError=true;
+                            errorMessage="Email or password is incorrect";
+                          }
                           // Navigator.pushReplacement(
                           //     context,
                           //     MaterialPageRoute(

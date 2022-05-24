@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hazri_mvp_frontend/EnrollmentScreen.dart';
-import 'package:hazri_mvp_frontend/LoginScreen.dart';
 import 'package:camera/camera.dart';
 import 'CameraScreen.dart';
-
-import 'DownloadAttendance.dart';
 
 class Lecture<T1, T2> {
   final T1 lectureName;
@@ -30,14 +25,6 @@ class _TimetableState extends State<Timetable> {
         [Lecture("DB-A", "8:30-10:00"), Lecture("OOP-A", "12:00-1:30"), Lecture("OS-B", "3:30-5:00")]);
   }
 
-  Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );
-  }
-
   Future<void> _redirectToCameraScreen() async {
     WidgetsFlutterBinding.ensureInitialized();
     final cameras = await availableCameras();
@@ -54,74 +41,6 @@ class _TimetableState extends State<Timetable> {
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(32, 179, 86, 1),
-        ),
-        drawer: Container(
-          width: 200,
-          child: Drawer(
-            backgroundColor: Colors.grey[300],
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: [
-                SizedBox(
-                  height: 87,
-                  child: DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(32, 179, 86, 1),
-                    ),
-                    child: Center(
-                        child: Text(
-                      "Menu",
-                      style: TextStyle(color: Colors.grey[300], fontSize: 25),
-                    )),
-                  ),
-                ),
-                ListTile(
-                  title: const Text(
-                    'Download Attendance',
-                    style: TextStyle(
-                      color: const Color.fromRGBO(32, 179, 86, 1),
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(
-                        context); //To close/reset the drawer menu before redirecting
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DownloadAttendance()));
-                  },
-                ),
-                ListTile(
-                  title: const Text(
-                    'Enroll in a class',
-                    style: TextStyle(
-                      color: const Color.fromRGBO(32, 179, 86, 1),
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(
-                        context); //To close/reset the drawer menu before redirecting
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const EnrollmentScreen()));
-                  },
-                ),
-                ListTile(
-                  title: Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: Colors.red[400],
-                    ),
-                  ),
-                  onTap: () {
-                    _signOut();
-                  },
-                ),
-              ],
-            ),
-          ),
         ),
         body: _buildLecturesList());
   }

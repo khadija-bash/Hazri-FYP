@@ -94,7 +94,7 @@ class _AttendanceListState extends State<AttendanceList> {
                 color: Colors.grey[300],
                 borderRadius: const BorderRadius.all(Radius.circular(7))),
             child: Icon(
-              present ? Icons.clear_rounded : Icons.check_rounded,
+              present ? Icons.check_rounded : Icons.clear_rounded,
               color: present
                   ? Colors.red[400]
                   : const Color.fromRGBO(32, 179, 86, 1),
