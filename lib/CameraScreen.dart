@@ -168,7 +168,7 @@ class CameraScreenState extends State<CameraScreen> {
                     file = File(image.path);
                     uploadFile();
                     final res = await getFaceCoordinate(
-                        "http://d096-35-231-196-22.ngrok.io/face_detection");
+                        "http://cbc7-34-75-198-28.ngrok.io/face_detection");
                     //debugPrint(res.body);
                     final val = jsonDecode(res.body);
                     print("Val: $val");
@@ -257,4 +257,3 @@ class DisplayPictureScreen extends StatelessWidget {
     );
   }
 }
-
