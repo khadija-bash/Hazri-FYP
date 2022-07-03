@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   void _redirectToDownloadAttendanceScreen() {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const DownloadAttendance()));
+        MaterialPageRoute(builder: (context) => const ViewAttendance()));
 
     //Reset the button that was just used
     setState(() {

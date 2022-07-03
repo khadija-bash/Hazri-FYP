@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hazri_mvp_frontend/HomePage.dart';
 import 'SignupScreen.dart';
@@ -21,14 +24,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future login() async {
     try {
-      final newUser = await _auth.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-      if (newUser != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+      //Only login if user is a teacher
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('Teachers')
+          .where('email', isEqualTo: emailController.text)
+          .get();
+      if(querySnapshot.docs.length == 1){
+        final user = await _auth.signInWithEmailAndPassword(
+            email: emailController.text, password: passwordController.text);
+        if (user != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
       }
+
     } catch (e) {
       rethrow;
     }
@@ -150,11 +161,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         //TODO: Add Email and Password combination check condition here
                         else {
                           inputError = false;
-                          try{
+                          try {
                             login();
-                          }catch(e){
-                            inputError=true;
-                            errorMessage="Email or password is incorrect";
+                          } catch (e) {
+                            inputError = true;
+                            errorMessage = "Email or password is incorrect";
                           }
                           // Navigator.pushReplacement(
                           //     context,

@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hazri_mvp_frontend/HomePage.dart';
 import 'LoginScreen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,15 +23,28 @@ class _SignupScreenState extends State<SignupScreen> {
   bool passwordObscured = true;
   bool confirmPasswordObscured = true;
   FirebaseAuth auth = FirebaseAuth.instance;
+  CollectionReference Teachers = FirebaseFirestore.instance.collection('Teachers');
 
   Future signup() async {
     try {
-      final newUser = await auth.createUserWithEmailAndPassword(
+      await auth.createUserWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
-      if (newUser != null) {
+      await auth.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      final User? user = auth.currentUser;
+      final uid = user?.uid;
+      final email = user?.email;
+      await Teachers
+          .add({
+        'UUID': uid,
+        'email': email,
+      })
+          .then((value) => log("User Added"))
+          .catchError((error) => log("Failed to add user: $error"));
+      if (user != null) {
         Navigator.pushReplacement(context,
           MaterialPageRoute(
-              builder: (context) => const LoginScreen()));
+              builder: (context) => const HomePage()));
       }
     }
     catch (e)
