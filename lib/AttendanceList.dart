@@ -19,7 +19,12 @@ class _AttendanceListState extends State<AttendanceList> {
     super.initState();
     data = widget.data;
     _absentList.addAll(["Khadija Bashir"]);
-    _presentList.addAll(data);
+    for( var i = 0 ; i < data.length; i++ ) {
+      if(!_presentList.contains(data[i]))
+        _presentList.add(data[i]);
+    }
+    //!_presentList.contains(data) ?? _presentList.add(data);
+    // _presentList.addAll(data);
     // _presentList.addAll(["Rabbia Sajjad"]);
     _studentsList.addAll(_absentList);
     _studentsList.addAll(_presentList);
@@ -97,6 +102,7 @@ class _AttendanceListState extends State<AttendanceList> {
             ),
           ),
           onPressed: () {
+            // NEW lines from here...
             setState(() {
               if (present) {
                 _presentList.remove(studentName);
@@ -120,6 +126,5 @@ class _AttendanceListState extends State<AttendanceList> {
 
   void _confirmAttendance() {
     Navigator.of(context).popUntil((route) => route.isFirst);
-    //TODO: Add attendance to firebase
   }
 }
